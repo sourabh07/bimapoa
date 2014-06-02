@@ -1,0 +1,3 @@
+member_id,scheme,policy_no,contract_effective_date,contract_expiry_date,membership_no,membership_name,dob,sex,relation,national_id,area,region,location,selected_provider_code,chw_code,date_signed,date_captured,card_issued,status,terminated_date,payment_type(FULL/TWO/Monthly),phone,emergency_phone,upload_file
+1,BIMA POA,APN0000073,10/1/2013,9/30/2014,,ESTHER ADHIAMBO OUMA,7/7/1982,Female,SELF,23361521,Siaya,Karemo,Siaya Town,HP0005,CH0000032,9/30/2013,10/22/2013,Y,Y,0000-00-00,,,,
+0,BIMA POA,APN0005573,0000-00-00,0000-00-00,,ESTHER ADHIAMBO OUMA,0000-00-00,Female,SELF,23361521,Siaya,Karemo,Siaya Town,HP0005,CH0000032,0000-00-00,0000-00-00,Y,Y,0000-00-00,,0,0,0

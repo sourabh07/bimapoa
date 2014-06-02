@@ -127,8 +127,8 @@ include '../include/top_navigation_in.php';
 								<div class="control-group">
 									<label for="textfield" class="control-label">DOB</label>
 									<div class="controls">
-										<input type="text" name="dob" class="input-xlarge "
-											value="<?php echo $row['dob'];?>" /> * Please Write Date with
+										<input type="text" name="dob" class="input-xlarge " 
+											value=" <?php echo $row['dob'];?>" /> * Please Write Date with
 										following format : [Year-Month-Day]->[1980-12-24]
 									</div>
 								</div>

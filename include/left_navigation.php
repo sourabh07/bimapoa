@@ -4,6 +4,31 @@ if (isset($_SESSION['user_type'])) {
 } else {
     header("Location: ../index.php");
 }
+
+//echo $user_type; exit();
+
+?>
+<?php if($user_type == "Provider")
+{
+?>
+<div id="left">
+	<div class="subnav">
+		<div class="subnav-title">
+			<a href="#" class='toggle-subnav'><i class="icon-angle-down"></i><span>Enrollment</span>
+			</a>
+		</div>
+		<ul class="subnav-menu">
+
+			<li><a href="member_management/manage_members.php">Member
+					Management</a>
+			</li>
+			
+		</ul>
+	</div>
+	</div>
+<?php 
+}
+else {
 ?>
 
 <div id="left">
@@ -96,6 +121,8 @@ if ($user_type == "Admin") {
         </div>
     <?php
 }
+
 ?>
 
 </div>
+<?php }?>

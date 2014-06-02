@@ -60,6 +60,11 @@ else
 							<!--                                                 <!--   <button class="btn btn-mini btn-warning pull-right"
 								style="margin-right: 10px;"
 								onclick="window.location.href='agent_export_data.php'">Export CSV</button>-->
+                                                        
+                                                         <button class="btn btn-mini btn-warning pull-right"
+								style="margin-right: 10px;"
+								onclick="window.location.href = '../download_log.php?sampleFile=uploads/log/log_agent.txt'">Download
+								Log</button>
 						</div>
 						<div class="box-content nopadding">
 							<table

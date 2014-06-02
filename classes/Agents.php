@@ -66,7 +66,7 @@ class Agents extends Helper {
 		$formvars['date_created'] = $this->Sanitize($_POST['date_created']);
 		list($m,$d,$y) = explode('/', $formvars['date_created']);
 		$formvars['date_created1'] = $y.'-'.$m.'-'.$d;
-	//	$formvars['agent_code'] = $this->Sanitize($_POST['agent_code']);
+		//	$formvars['agent_code'] = $this->Sanitize($_POST['agent_code']);
 		$formvars['phone'] = $this->Sanitize($_POST['phone']);
 	}
 
@@ -76,28 +76,16 @@ class Agents extends Helper {
 		$formvars['date_created'] = $this->Sanitize($_POST['date_created']);
 		list($m,$d,$y) = explode('/', $formvars['date_created']);
 		$formvars['date_created1'] = $y.'-'.$m.'-'.$d;
-		//$formvars['agent_code'] = $this->Sanitize($_POST['agent_code']);
 		$formvars['phone'] = $this->Sanitize($_POST['phone']);
-		//$formvars['bank_name'] = $this->Sanitize($_POST['bank_name']);
-		//$formvars['account_name'] = $this->Sanitize($_POST['account_name']);
-		//$formvars['account_no'] = $this->Sanitize($_POST['account_no']);
-		//$formvars['iifc_code'] = $this->Sanitize($_POST['iifc_code']);
 	}
 	function ValidateAgentUpdation() {
-		//This is a hidden input field. Humans won't fill this field.
 		if (!empty($_POST[$this->GetSpamTrapInputName()])) {
-			//The proper error is not given intentionally
 			$this->HandleError("Automated submission prevention: case 2 failed");
 			return false;
 		}
 		$validator = new FormValidator();
 		$validator->addValidation("name", "req", "Please fill in Agent Name");
-	//	$validator->addValidation("date_created", "req", "Please fill in Date created");
-		//$validator->addValidation("agent_code", "req", "Please fill in agent_code");
 		$validator->addValidation("phone", "req", "Please fill in phone");
-		//$validator->addValidation("account_name", "req", "Please fill in City");
-		//$validator->addValidation("account_no", "req", "Please provide Education");
-		//$validator->addValidation("iifc_code", "req", "Please provide Occupation");
 		if (!$validator->ValidateForm()) {
 			$error = '';
 			$error_hash = $validator->GetErrors();
@@ -112,21 +100,14 @@ class Agents extends Helper {
 
 
 	function ValidateAgentSubmission() {
-		//This is a hidden input field. Humans won't fill this field.
 		if (!empty($_POST[$this->GetSpamTrapInputName()])) {
-			//The proper error is not given intentionally
 			$this->HandleError("Automated submission prevention: case 2 failed");
 			return false;
 		}
 		$validator = new FormValidator();
 		$validator->addValidation("name", "req", "Please fill in Agent Name");
 		$validator->addValidation("date_created", "req", "Please fill in Date created");
-		//$validator->addValidation("agent_code", "req", "Please fill in agent_code");
 		$validator->addValidation("phone", "req", "Please fill in phone");
-		//$validator->addValidation("bank_name", "req", "Please fill in Address");
-		//$validator->addValidation("account_name", "req", "Please fill in City");
-		//$validator->addValidation("account_no", "req", "Please provide Education");
-		//$validator->addValidation("iifc_code", "req", "Please provide Occupation");
 		if (!$validator->ValidateForm()) {
 			$error = '';
 			$error_hash = $validator->GetErrors();
@@ -172,46 +153,30 @@ class Agents extends Helper {
 	{
 		$mysqlvars = array();
 		$mysqlvars['name'] = $this->SanitizeForSQL($formvars['name']);
-		//$mysqlvars['date_created'] = $this->SanitizeForSQL($formvars['date_created1']);
-		//$mysqlvars['agent_code'] = $this->SanitizeForSQL($formvars['agent_code']);
 		$mysqlvars['phone'] = $this->SanitizeForSQL($formvars['phone']);
-		//$mysqlvars['bank_name'] = $this->SanitizeForSQL($formvars['bank_name']);
-		//$mysqlvars['account_name'] = $this->SanitizeForSQL($formvars['account_name']);
-		//$mysqlvars['account_no'] = $this->SanitizeForSQL($formvars['account_no']);
-		//$mysqlvars['iifc_code'] = $this->SanitizeForSQL($formvars['iifc_code']);
 		if (!$this->db->update("agent", $mysqlvars , "agent_id = '".$formvars['agent_id']."'"))
 		{
 			$this->HandleDBError("Error Updating data to the table\nquery:$insert_query");
 			return false;
 		}
-		return true;
+                
+                  $msg = 'Update Agent data of name'."\t".$mysqlvars['name']. "\t";
+                  $this->db->AgentLogData($mysqlvars,$msg);
+                 return true;
+                
+               
+                
 	}
 
 	function InsertIntoDB(&$formvars)
 	{
 
-
-		/* srand((double)microtime()*1000000);
-
-		$data = "AbcDE123IJKLMN67QRSTUVWXYZ";
-		$data .= "aBCdefghijklmn123opq45rs67tuv89wxyz";
-		$data .= "0FGH45OP89";
-
-		for($i = 0; $i < 10; $i++)
-		{
-		$agent_code .= substr($data, (rand()%(strlen($data))), 1);
-		} */
 		$mysqlvars = array();
 		$mysqlvars['name'] = $this->SanitizeForSQL($formvars['name']);
 		$mysqlvars['date_created'] = $this->SanitizeForSQL($formvars['date_created1']);
 		$mysqlvars['agent_code'] = $this->SanitizeForSQL($formvars['agent_code']);
 		$mysqlvars['phone'] = $this->SanitizeForSQL($formvars['phone']);
-		//$mysqlvars['bank_name'] = $this->SanitizeForSQL($formvars['bank_name']);
-		//$mysqlvars['account_name'] = $this->SanitizeForSQL($formvars['account_name']);
-		//$mysqlvars['account_no'] = $this->SanitizeForSQL($formvars['account_no']);
-		//$mysqlvars['iifc_code'] = $this->SanitizeForSQL($formvars['iifc_code']);
-		//$mysqlvars['agent_code'] = $this->SanitizeForSQL(strtoupper($agent_code.$formvars['national_id']));
-
+		
 		if (!$this->db->insert('agent', $mysqlvars)) {
 			$this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
 			return false;
@@ -227,20 +192,33 @@ class Agents extends Helper {
 			$this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
 			return false;
 		}
-		return true;
+                
+                 $msg = 'Insert Agent data of agent_code'."\t".$mysqlvars['agent_code']. "\t";
+                 $this->db->AgentLogData($mysqlvars,$msg);
+                
+                 return true;
+		 
+               
 	}
+        
+        
 
 
 	function ActiveDeactive($agent_code,$current_status)
 	{
+               
 		$updatedStatus = null;
 		if($current_status == '1')
 		{
 			$updatedStatus = '0';
+                        $msg = 'Active Agent data of agent_code'."\t"."\t".$agent_code;
+                        $this->db->AgentLogData($agent_code,$msg);
 		}
-		else
+		 else
 		{
 			$updatedStatus = '1';
+                         $msg1 = 'DeActive Agent data of agent_code'."\t".$agent_code;
+                         $this->db->AgentLogData($agent_code,$msg1);
 		}
 		$arrayStatus = Array();
 		$arrayStatus['status'] = $this->SanitizeForSQL($updatedStatus);
@@ -249,6 +227,13 @@ class Agents extends Helper {
 			$this->HandleDBError("Error Updating data to the table\nquery:$insert_query");
 		}
 		$this->RedirectToURL("manage_agents.php");
-	}
+                
+                }
+        
+        
+         
+        
+        
+        
 }
 ?>

@@ -62,6 +62,7 @@
 <!-- FullCalendar -->
 <script src="../js/plugins/fullcalendar/fullcalendar.min.js"></script>
 
+
 <!-- Bootbox -->
 <script src="../js/plugins/bootbox/jquery.bootbox.js"></script>
 
@@ -84,12 +85,5 @@
 <!-- Apple devices Homescreen icon -->
 <link rel="apple-touch-icon-precomposed"
 	href="../img/apple-touch-icon-precomposed.png" />
-
-<script
-	src="../js/plugins/datepicker/bootstrap-datepicker.js"></script>
-<!-- Datepicker -->
-<link
-	rel="stylesheet" href="../css/plugins/datepicker/datepicker.css">
-
 
 </head>

@@ -1,3 +1,14 @@
+<?php
+if(isset($_SESSION['user_type']))
+{
+	$user_type = $_SESSION['user_type'];
+}
+else
+{
+	header("Location: ../index.php");
+}
+?>
+
 <div id="navigation">
 	<div class="container-fluid">
 		<a href="../dashboard.php" id="brand"> <!-- <img
@@ -7,7 +18,9 @@
 		</a> <a href="#" class="toggle-nav" rel="tooltip"
 			data-placement="bottom" title="Toggle navigation"><i
 			class="icon-reorder"></i> </a>
-
+<?php if($user_type != "Provider")
+	{
+		?>
 		<ul class='main-nav'>
 
 			<li><a href="#" data-toggle="dropdown" class='dropdown-toggle'> <i
@@ -19,6 +32,9 @@
 					<li><a href="../report_management/pending_transaction_list.php">Pending Installments</a></li>
 				</ul></li>
 		</ul>
+		<?php 
+	}
+		?>
 		<div class="user">
 			<ul class="icon-nav">
 

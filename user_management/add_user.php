@@ -8,6 +8,24 @@ if($_POST['submitted']){
 	}
 }
 ?>
+<script>
+ function check_provider(value)
+    {
+        $.ajax({
+            type: "POST",
+            url: "get_provider.php",
+            data: "provider_code=" + value,
+            success: function(result) {
+                // alert(result);
+                if (result != "error")
+                {
+                    document.getElementById('provider_name').value = result;
+                }
+            }
+        });
+    }
+    </script>
+
 <?php include '../include/top_navigation_in.php';?>
 <div class="container-fluid" id="content">
 	<?php include '../include/left_navigation_in.php';?>
@@ -62,74 +80,50 @@ if($_POST['submitted']){
 											id="user_email" />
 									</div>
 								</div>
-								<div class="control-group">
-									<label for="textfield" class="control-label">* Password</label>
+									<div class="control-group">
+									<label for="textfield" class="control-label">* Username</label>
 									<div class="controls">
-										<input type="password" name="password"
-											value="<?php echo $userobj->SafeDisplay('password');?>"
-											id="password" />
+										<input type="text" name="username"
+											value="<?php echo $userobj->SafeDisplay('username');?>"
+											id="username" />
 									</div>
 								</div>
+										<div class="control-group">
+											<label for="textfield" class="control-label">* Password</label>
+											<div class="controls">
+												<input type="password" name="password"
+													value="<?php echo $userobj->SafeDisplay('password');?>"
+													id="password" />
+											</div>
+										</div>
 								<div class="control-group">
 									<label for="textfield" class="control-label">* User Type</label>
 									<div class="controls">
 										<!-- <input type="text" name="user_type"
 											value="<?php echo $userobj->SafeDisplay('user_type');?>"
 											id="user_type" /> -->
-										<select name="user_type" id="user_type">
-<!--											<option>---Select User Type---</option>-->
-											<option>Admin</option>
-											<option>Staff</option>
+										<select name="user_type" id="user_type" onChange="disp_div(this.value)">
+											<option value="Admin">Admin</option>
+											<option value="Provider">Provider</option>
+											<option value="Staff">Staff</option>
 										</select>
 									</div>
 								</div>
-								<div class="control-group">
-									<label for="textfield" class="control-label">Role</label>
+								
+									<div class="control-group" style = "display: none;" id="provider_code_div">
+									<label for="textfield" class="control-label">* Provider Code</label>
 									<div class="controls">
-										<input type="text" name="role"
-											value="<?php echo $userobj->SafeDisplay('role');?>" id="role" />
+										<select name="provider_code"
+											id="provider_code"
+											onchange="check_provider(this.value)">
+											<option>---Select Provider Code---</option>
+											<?php echo $userobj->getProviders(); ?>
+										</select>&nbsp;&nbsp; Provider Name &nbsp;&nbsp;<input
+											type="text" name="provider_name" id="provider_name" value=""
+											readonly="readonly">
 									</div>
 								</div>
-								<div class="control-group">
-									<label for="textfield" class="control-label">* Mobile No</label>
-									<div class="controls">
-										<input type="text" name="mobile" maxlength="10"
-											value="<?php echo $userobj->SafeDisplay('mobile');?>"
-											id="mobile" />
-									</div>
-								</div>
-
-
-
-								<div class="control-group">
-									<label for="textfield" class="control-label">Designation</label>
-									<div class="controls">
-										<input type="text" name="designation" maxlength="10"
-											value="<?php echo $userobj->SafeDisplay('designation');?>"
-											id="designation" />
-									</div>
-								</div>
-
-								<div class="control-group">
-									<label for="textfield" class="control-label">Gender</label>
-									<div class="controls">
-										<select name="gender" id="gender">
-<!--											<option>---Select Sex---</option>-->
-											<option value="Female">Female</option>
-											<option value="Male">Male</option>
-										</select>
-									</div>
-								</div>
-
-								<!-- 	<div class="control-group">
-									<label for="textfield" class="control-label">Gender</label>
-									<div class="controls">
-										<input type="text" name="gender" maxlength="10"
-											value="<?php echo $userobj->SafeDisplay('gender');?>"
-											id="gender" />
-									</div>
-								</div> -->
-
+								
 								<div class="control-group">
 									<div class="controls">
 										<input type="submit" name="submitted" value="Submit"  class="btn btn-primary"/> <input
@@ -147,6 +141,26 @@ if($_POST['submitted']){
 		</div>
 	</div>
 </div>
+<script>
+function start()
+{
+        var f=document.getElementById("provider_code_div");
+        f.style.display = 'none';
+}
+function disp_div(value)
+{
+       var f=document.getElementById("provider_code_div");
+				if(value === "Provider")
+				{      
+					f.style.display = 'block';
+				}
+				else
+				{
+					   f.style.display = 'none';
+				}
+				
+}      
+</script>
 
 
 

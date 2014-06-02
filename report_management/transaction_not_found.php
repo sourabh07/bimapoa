@@ -1,5 +1,4 @@
 <?php 
-session_start();
 include '../common_include_in.php';
 $memberobj = new Members();
 /* $db = mysql_connect('ambush2006.db.11283971.hostedresource.com', 'ambush2006', 'Velociter@1985') or die("Could not connect.");

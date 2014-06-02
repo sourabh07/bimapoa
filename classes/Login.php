@@ -12,7 +12,7 @@ class Login extends Helper {
 	}
 	function Login() {
 
-		if (empty($_POST['user_email'])) {
+		if (empty($_POST['username'])) {
 			$this->HandleError("UserName is empty!");
 			return false;
 		}
@@ -20,8 +20,7 @@ class Login extends Helper {
 			$this->HandleError("Password is empty!");
 			return false;
 		}
-
-		$username = trim($_POST['user_email']);
+		$username = trim($_POST['username']);
 		$password = trim($_POST['password']);
 
 		if (!isset($_SESSION)) {
@@ -37,15 +36,19 @@ class Login extends Helper {
 	function CheckLoginInDB($username, $password) {
 		$username = $this->SanitizeForSQL($username);
 		$pwdmd5 = $this->SanitizeForSQL($password);
-		$qry = "Select * from users where user_email='$username' and password='$pwdmd5' and status = '1'";
+		$qry = "Select * from users where username='$username' and password='$pwdmd5' and status = '1'";
 		$result = $this->db->query($qry);
 		if (!$result || $this->db->num_rows($result) <= 0) {
 			$this->HandleError("Error logging in. The username or password does not match");
 			return false;
 		}
 		$row = mysql_fetch_assoc($result);
-		$_SESSION['user_type'] = $row['user_type'];
+		$_SESSION['full_name'] = $row['full_name'];
 		$_SESSION['user_id'] = $row['user_id'];
+		$_SESSION['user_email'] = $row['user_email'];
+		$_SESSION['username'] = $row['username'];
+		$_SESSION['user_type'] = $row['user_type'];
+		$_SESSION['provider_code'] = $row['provider_code'];
 		return true;
 	}
 

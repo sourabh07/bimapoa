@@ -54,7 +54,7 @@ $loginobject = new Login();
 					</span>
 				</div>
 				<div class="email">
-					<input type="text" name='user_email' value="<?php echo $loginobject->SafeDisplay('user_email');?>" placeholder="Email address" class='input-block-level'>
+					<input type="text" name='username' value="<?php echo $loginobject->SafeDisplay('username');?>" placeholder="Email address" class='input-block-level'>
 				</div>
 				<div class="pw">
 					<input type="password" name="password" placeholder="Password"
@@ -72,7 +72,7 @@ $loginobject = new Login();
 	</div>
 	<script type="text/javascript">
 
-  var _gaq = _gaq || [];
+	var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-38620714-4']);
   _gaq.push(['_trackPageview']);
 

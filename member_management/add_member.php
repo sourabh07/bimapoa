@@ -74,6 +74,11 @@ if ($_POST['submitted']) {
     
     </script>
 
+<script
+	src="../js/plugins/datepicker/bootstrap-datepicker.js"></script>
+<!-- Datepicker -->
+<link
+	rel="stylesheet" href="../css/plugins/datepicker/datepicker.css">
 
 <div class="container-fluid" id="content">
 <?php include '../include/left_navigation_in.php'; ?>
@@ -353,19 +358,7 @@ if ($_POST['submitted']) {
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-38620714-4']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 <script type="text/javascript">
     function addElement() {
         var ni = document.getElementById('myDiv');

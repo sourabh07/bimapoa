@@ -1,0 +1,2 @@
+id,IPN_Id,mpesa_originator,mpesa_destination,mpesa_transaction_date,mpesa_text,mpesa_user,mpesa_password,mpesa_code,mpesa_account,mpesa_msisdn,mpesa_transaction_date,mpesa_transaction_time,mpesa_amount,mpesa_sender,date_record_created,processed,status
+0,0,0,0,3/12/2014,Payment received from 07269667520 WILSON 0NDIALA Acc. APN0001071,0,0,EY81LP671,APN0001071/645344546,0,0,0,"8,000",0,0,0,0

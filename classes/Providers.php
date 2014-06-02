@@ -54,10 +54,9 @@ class Providers extends Helper {
 			return false;
 		}
 		$validator = new FormValidator();
-		$validator->addValidation("provider_name", "req", "  Please Enter provider Name");
-		$validator->addValidation("address", "req", "  Please Enter address");
-		//$validator->addValidation("provider_code", "req", "  Enter provider code");
-		$validator->addValidation("phone", "req", "  Please Enter phone");
+		$validator->addValidation("provider_name", "req", "  Please Enter Provider Name");
+		$validator->addValidation("address", "req", "  Please Enter Address");
+		$validator->addValidation("phone", "req", "  Please Enter Phone");
 //		$validator->addValidation("bank_name", "req", "  Please Enter bank_name");
 //		$validator->addValidation("account_name", "req", "Please Enter account_name");
 //		$validator->addValidation("account_no", "req", "Please Enter account_no");
@@ -176,10 +175,9 @@ class Providers extends Helper {
 			return false;
 		}
 		$validator = new FormValidator();
-		$validator->addValidation("provider_name", "req", "  Please Enter provider  Name");
-		$validator->addValidation("address", "req", "  Please Enter address");
-		//$validator->addValidation("provider_code", "req", "  Enter provider_code");
-		$validator->addValidation("phone", "req", "  Please Enter phone");
+		$validator->addValidation("provider_name", "req", "  Please Enter Provider  Name");
+		$validator->addValidation("address", "req", "  Please Enter Address");
+		$validator->addValidation("phone", "req", "  Please Enter Phone");
 //		$validator->addValidation("bank_name", "req", "  Please Enter bank_name");
 //		$validator->addValidation("account_name", "req", "Please Enter account_name");
 //		$validator->addValidation("account_no", "req", "Please Enter account_no");
@@ -230,10 +228,14 @@ class Providers extends Helper {
 		if($current_status == '1')
 		{
 			$updatedStatus = '0';
+                        $msg = 'Active Provider data of provider_code'."\t"."\t".$provider_code;
+                        $this->db->ProviderLogData($provider_code,$msg);
 		}
 		else
 		{
 			$updatedStatus = '1';
+                        $msg1 = 'DeActive Provider data of $provider_code'."\t".$provider_code;
+                        $this->db->ProviderLogData($provider_code,$msg1);
 		}
 		$arrayStatus = Array();
 		$arrayStatus['status'] = $this->SanitizeForSQL($updatedStatus);

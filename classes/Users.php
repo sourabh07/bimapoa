@@ -45,13 +45,10 @@ class Users extends Helper {
 
 		$formvars['full_name'] = $this->Sanitize($_POST['full_name']);
 		$formvars['user_email'] = $this->Sanitize($_POST['user_email']);
+		$formvars['username'] = $this->Sanitize($_POST['username']);
 		$formvars['password'] = $this->Sanitize($_POST['password']);
 		$formvars['user_type'] = $this->Sanitize($_POST['user_type']);
-		$formvars['role'] = $this->Sanitize($_POST['role']);
-		$formvars['mobile'] = $this->Sanitize($_POST['mobile']);
-		$formvars['designation'] = $this->Sanitize($_POST['designation']);
-		$formvars['gender'] = $this->Sanitize($_POST['gender']);
-
+		$formvars['provider_code'] = $this->Sanitize($_POST['provider_code']);
 	}
 
 	function ValidateSubmission() {
@@ -65,12 +62,11 @@ class Users extends Helper {
 		$validator = new FormValidator();
 		$validator->addValidation("full_name", "req", "Please fill in name");
 		$validator->addValidation("user_email", "req", "Please fill in email");
+		$validator->addValidation("user_email", "email", "Please fill in email with proper format");
 		$validator->addValidation("password", "req", "Please fill in password");
 		$validator->addValidation("user_type", "req", "Please fill in user_type");
-		$validator->addValidation("role", "req", "Please fill in role");
-		$validator->addValidation("mobile", "req", "Please fill in mobile");
-		$validator->addValidation("designation", "req", "Please fill in designation");
-		$validator->addValidation("gender", "req", "Please fill in gender");
+		$validator->addValidation("username", "req", "Please fill in username");
+		$validator->addValidation("provider_code", "req", "Please fill in designation");
 
 		if (!$validator->ValidateForm()) {
 			$error = '';
@@ -110,15 +106,17 @@ class Users extends Helper {
 		$mysqlvars['user_email'] = $this->SanitizeForSQL($formvars['user_email']);
 		$mysqlvars['password'] = $this->SanitizeForSQL($formvars['password']);
 		$mysqlvars['user_type'] = $this->SanitizeForSQL($formvars['user_type']);
-		$mysqlvars['role'] = $this->SanitizeForSQL($formvars['role']);
-		$mysqlvars['mobile'] = $this->SanitizeForSQL($formvars['mobile']);
-		$mysqlvars['designation'] = $this->SanitizeForSQL($formvars['designation']);
-		$mysqlvars['gender'] = $this->SanitizeForSQL($formvars['gender']);
+		$mysqlvars['username'] = $this->SanitizeForSQL($formvars['username']);
+		$mysqlvars['provider_code'] = $this->SanitizeForSQL($formvars['provider_code']);
 
 		if (!$this->db->insert('users', $mysqlvars)) {
 			$this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
 			return false;
 		}
+                
+                $msg='Insert User Data'."\t".$mysqlvars['user_type']. "\t";
+                $this->db->UserLogData($mysqlvars, $msg);
+                
 		return true;
 	}
 	//--------------------update--------------------------------
@@ -167,12 +165,12 @@ class Users extends Helper {
 		$validator = new FormValidator();
 		$validator->addValidation("full_name", "req", "Please fill in name");
 		$validator->addValidation("user_email", "req", "Please fill in email");
-		//	$validator->addValidation("password", "req", "Please fill in password");
+		$validator->addValidation("user_email", "email", "Please fill in email with proper format");
 		$validator->addValidation("user_type", "req", "Please fill in user_type");
-		$validator->addValidation("role", "req", "Please fill in role");
-		$validator->addValidation("mobile", "req", "Please fill in mobile");
-		$validator->addValidation("designation", "req", "Please fill in designation");
-		$validator->addValidation("gender", "req", "Please fill in gender");
+		//$validator->addValidation("role", "req", "Please fill in role");
+		//$validator->addValidation("mobile", "req", "Please fill in mobile");
+		//$validator->addValidation("designation", "req", "Please fill in designation");
+		//$validator->addValidation("gender", "req", "Please fill in gender");
 
 		if (!$validator->ValidateForm()) {
 			$error = '';
@@ -201,31 +199,44 @@ class Users extends Helper {
 		$mysqlvars['user_email'] = $this->SanitizeForSQL($formvars['user_email']);
 		//$mysqlvars['password'] = $this->SanitizeForSQL($formvars['password']);
 		$mysqlvars['user_type'] = $this->SanitizeForSQL($formvars['user_type']);
-		$mysqlvars['role'] = $this->SanitizeForSQL($formvars['role']);
-		$mysqlvars['mobile'] = $this->SanitizeForSQL($formvars['mobile']);
-		$mysqlvars['designation'] = $this->SanitizeForSQL($formvars['designation']);
-		$mysqlvars['gender'] = $this->SanitizeForSQL($formvars['gender']);
+		//$mysqlvars['role'] = $this->SanitizeForSQL($formvars['role']);
+		//$mysqlvars['mobile'] = $this->SanitizeForSQL($formvars['mobile']);
+		//$mysqlvars['designation'] = $this->SanitizeForSQL($formvars['designation']);
+		//$mysqlvars['gender'] = $this->SanitizeForSQL($formvars['gender']);
 
 		if (!$this->db->update("users", $mysqlvars , "user_id = '".$formvars['user_id']."'"))
 		{
 			$this->HandleDBError("Error Updating data to the table\nquery:$insert_query");
 			return false;
 		}
+                
+                
+                $msg='Update User Data'."\t".$mysqlvars['user_type']. "\t";
+                $this->db->UserLogData($mysqlvars, $msg);
+                
 		return true;
 	}
 
-      
-        
-        function ActiveDeactive($user_id,$current_status)
+
+
+	function ActiveDeactive($user_id,$current_status)
 	{
+            
+            $qrystring = "select * from users where user_id= '".$user_id."'";
+            $result_user = mysql_query($qrystring);
+            $row_user = mysql_fetch_array($result_user);
 		$updatedStatus = null;
 		if($current_status == '1')
 		{
 			$updatedStatus = '0';
+                        $msg='Active User Data of '."\t".$row_user['full_name']."\t";
+                        $this->db->UserLogData($mysqlvars, $msg);
 		}
 		else
 		{
 			$updatedStatus = '1';
+                         $msg1='DeActive User Data of'."\t" .$row_user['full_name']."\t";
+                        $this->db->UserLogData($mysqlvars, $msg1);
 		}
 		$arrayStatus = Array();
 		$arrayStatus['status'] = $this->SanitizeForSQL($updatedStatus);

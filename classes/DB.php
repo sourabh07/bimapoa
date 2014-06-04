@@ -7,16 +7,11 @@ class DB {
     var $result_id = NULL;
     var $result = NULL;
 
-	function connect() {
-	 	@mysql_connect('ambush2006.db.11283971.hostedresource.com', 'ambush2006', 'Velociter@1985') or die("Unable to connect to MySql Server");
-	        @mysql_select_db('ambush2006') or die("Unable to select database");
-	        return true;
-	} 
-//    function connect() {
-//        @mysql_connect('localhost', 'root', '') or die("Unable to connect to MySql Server");
-//        @mysql_select_db('ambush2006') or die("Unable to select database");
-//        return true;
-//    }
+    function connect() {
+            @mysql_connect('localhost', 'root', '') or die("Unable to connect to MySql Server");
+            @mysql_select_db('ambush2006') or die("Unable to select database");
+            return true;
+    } 
 
     function query($query) {
         /* echo $query; */
@@ -149,14 +144,6 @@ class DB {
         $fh = fopen($myFile, 'a') or die("can't open file");
         fwrite($fh, $dateTime . "\t");
         fwrite($fh, $data ."-". " BY " .$_SESSION['full_name']."{".($_SESSION['user_email'])."} {".($_SESSION['user_id'])."}". "\n");
-//       
-//       header('Content-Type: application/octet-stream');
-//       header('Content-Disposition: attachment; filename='.basename('../uploads/log/log_members.txt'));
-//      header('Expires: 0');
-//      header('Cache-Control: must-revalidate');
-//      header('Pragma: public');
-//      header('Content-Length: ' . filesize('../uploads/log/log_members.txt')); 
-//       readfile('../uploads/log/log_members.txt');
         fclose($fh);
        
     }

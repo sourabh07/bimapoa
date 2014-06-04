@@ -1,9 +1,6 @@
 <?php
 include '../common_include_in.php';
 include '../include/header_in.php';
-?>
-
-<?php
 include '../include/top_navigation_in.php';
 
 $memberobj = new Members();

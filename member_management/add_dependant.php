@@ -4,9 +4,9 @@ include '../include/header_in.php';
 
 $memberobj = new Members();
 $policy_no = $_GET['policy_no'];
-$count = $memberobj->row_count('bimapoa_members', 'policy_no = "'.$policy_no.'"');
+$count = $memberobj->row_count('bimapoa_members', 'policy_no = "'.$policy_no.'" and status="Y"');
 //echo "select * from bimapoa_members where policy_no ='".$policy_no."' and relation='Spouse'";
-$countspouseqry = mysql_query("select * from bimapoa_members where policy_no ='".$policy_no."' and relation='Spouse'");
+$countspouseqry = mysql_query("select * from bimapoa_members where policy_no ='".$policy_no."' and relation='Spouse' an status='Y'");
 $countspouse  = mysql_num_rows($countspouseqry);
 
 ?>

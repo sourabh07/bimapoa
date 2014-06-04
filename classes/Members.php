@@ -1,7 +1,5 @@
 <?php
-
 include_once 'Validations.php';
-
 class Members extends Helper {
 
     private $db;
@@ -13,9 +11,7 @@ class Members extends Helper {
         $this->db->connect();
     }
 
-    function __destruct() {
-        
-    }
+    function __destruct() {}
 
     function ActiveDeactive($policy_no, $current_status) {
         $updatedStatus = null;
@@ -49,15 +45,11 @@ class Members extends Helper {
         if (!$this->SaveToDatabase($formvars)) {
             return false;
         }
-        /* if (!$this->SendUserConfirmationEmail($formvars)) {
-          return false;
-          }
-          $this->SendAdminIntimationEmail($formvars); */
         $this->RedirectToURL("manage_members.php");
     }
 
     function CollectMemberDataSubmission(&$formvars) {
-        //Full,Two,monthly
+        
         $formvars['scheme'] = $this->Sanitize("BIMAPOA");
         $formvars['policy_no'] = $this->Sanitize($_POST['policy_no']);
         $formvars['national_id'] = $this->Sanitize($_POST['national_id']);
@@ -70,39 +62,99 @@ class Members extends Helper {
         $formvars['dob1'] = $y . '-' . $m . '-' . $d;
         $formvars['sex'] = $this->Sanitize($_POST['sex']);
         $formvars['relation'] = $this->Sanitize($_POST['relation']);
-
         $formvars['area'] = $this->Sanitize($_POST['area']);
         $formvars['region'] = $this->Sanitize($_POST['region']);
         $formvars['location'] = $this->Sanitize($_POST['location']);
         $formvars['selected_provider_code'] = $this->Sanitize($_POST['selected_provider_code']);
         $formvars['chw_code'] = $this->Sanitize($_POST['chw_code']);
         $formvars['transaction_no'] = $this->Sanitize($_POST['transaction_no']);
+        
         list($m, $d, $y) = explode('/', $_POST['transaction_date']);
         $formvars['date_signed'] = $y . '-' . $m . '-' . $d;
-
+        
         list($m, $d, $y) = explode('/', $_POST['transaction_date']);
         $formvars['transaction_date'] = $y . '-' . $m . '-' . $d;
 
-        $neweffectdate = "";
-        if ($d > 20) {
-            $mod_date = strtotime($formvars['transaction_date'] . "+ 2 months");
-            $neweffectdate = date("Y-m", $mod_date) . "-1";
-        } else if ($d < 20) {
-            $mod_date = strtotime($formvars['transaction_date'] . "+ 1 months");
-            $neweffectdate = date("Y-m", $mod_date) . "-1";
+        list($m1, $d1, $y1) = explode('/', $_POST['transaction_date']);
+        $formvars['date_tra_check'] = $y1 . '-' . $m1 . '-' . $d1;
+        
+         $qrychecktradate = mysql_query("select * from mpesa where mpesa_account='" .$_POST['national_id'] . "'  or mpesa_account='" .$_POST['policy_no'] . "' ORDER BY id ASC limit 0,1");
+         $counttradate = mysql_num_rows($qrychecktradate);
+         $fetchresultdate = mysql_fetch_array($qrychecktradate);
+         $status = 'N';
+        if($counttradate > 0)
+        {
+            if($formvars['date_tra_check'] == $fetchresultdate['mpesa_transaction_date'])
+            {
+                $formvars['date_signed'] = $formvars['transaction_date'];
+                $neweffectdate = "";
+                if ($d1 >= 20) {
+                    $mod_date = strtotime($formvars['transaction_date'] . "+ 2 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                } else if ($d1 <= 20) {
+                    $mod_date = strtotime($formvars['transaction_date'] . "+ 1 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                }
+                $mod_date = strtotime($neweffectdate . "+ 364 days");
+                $contractexpiredate = date("Y-m-d", $mod_date);
+
+                $formvars['neweffectdate'] = $neweffectdate;
+                $formvars['contractexpiredate'] = $contractexpiredate;
+
+                $dateTime = date('Y-m-d');
+                $formvars['date_captured'] = $dateTime;
+                $status = 'Y';
+                $this->MemberLogData("Transaction Date Insertion Is Wrong");
+            }
+            else
+            {
+                $formvars['date_signed'] = $fetchresultdate['mpesa_transaction_date'];
+                $neweffectdate = "";
+                if ($d1 > 20) {
+                    $mod_date = strtotime($fetchresultdate['mpesa_transaction_date'] . "+ 2 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                } else if ($d1 < 20) {
+                    $mod_date = strtotime($fetchresultdate['mpesa_transaction_date'] . "+ 1 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                }
+
+                $mod_date = strtotime($neweffectdate . "+ 364 days");
+                $contractexpiredate = date("Y-m-d", $mod_date);
+
+                $formvars['neweffectdate'] = $neweffectdate;
+                $formvars['contractexpiredate'] = $contractexpiredate;
+
+                $dateTime = date('Y-m-d');
+                $formvars['date_captured'] = $dateTime;
+                $status = 'Y';
+                $this->MemberLogData("Transaction Date Insertion Is Wright");
+            }
+        }  else {
+            $formvars['date_signed'] = $formvars['transaction_date'];
+                $neweffectdate = "";
+                if ($d1 >= 20) {
+                    $mod_date = strtotime($formvars['transaction_date'] . "+ 2 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                } else if ($d1 <= 20) {
+                    $mod_date = strtotime($formvars['transaction_date'] . "+ 1 months");
+                    $neweffectdate = date("Y-m", $mod_date) . "-1";
+                }
+
+                $mod_date = strtotime($neweffectdate . "+ 364 days");
+                $contractexpiredate = date("Y-m-d", $mod_date);
+
+                $formvars['neweffectdate'] = $neweffectdate;
+                $formvars['contractexpiredate'] = $contractexpiredate;
+
+                $dateTime = date('Y-m-d');
+                $formvars['date_captured'] = $dateTime;
+                $status = 'Y';
+                $this->MemberLogData("Transaction Date Insertion Is Wrong");
         }
-
-        $mod_date = strtotime($neweffectdate . "+ 364 days");
-        $contractexpiredate = date("Y-m-d", $mod_date);
-
-        $formvars['neweffectdate'] = $neweffectdate;
-        $formvars['contractexpiredate'] = $contractexpiredate;
-
-        $dateTime = date('Y-m-d');
-        $formvars['date_captured'] = $dateTime;
-        //$formvars['card_issued'] = $this->Sanitize($_POST['card_issued']);
-        //$formvars['terminated_date'] = $this->Sanitize($_POST['terminated_date']);
+        
         $dep = $_POST['dep_relation'];
+        $formvars['date_captured'] = date('Y-m-d');
+        $formvars['status'] = $status;
         $formvars['payment_type'] = $this->Sanitize($_POST['payment_type']);
         for ($h = 0; $h < count($dep); $h++) {
             $formvars['dep_mem_name'] = $this->Sanitize($_POST['dep_mem_name'][$h]);
@@ -111,35 +163,26 @@ class Members extends Helper {
         }
     }
 
-    function ValidateMemberSubmission() {
-        //This is a hidden input field. Humans won't fill this field.
+    function ValidateMemberSubmission(){
+        
         if (!empty($_POST[$this->GetSpamTrapInputName()])) {
-            //The proper error is not given intentionally
             $this->HandleError("Automated submission prevention: case 2 failed");
             return false;
         }
         $validator = new FormValidator();
-        //$validator->addValidation("scheme", "req", "  Please Enter Scheme Name");
         $validator->addValidation("policy_no", "req", "  Please Enter policy_no");
         $validator->addValidation("phone", "req", "  Please Enter Contact Details");
-        //$validator->addValidation("emergency_phone", "req", "  Enter Contract_effective_date");
         $validator->addValidation("membership_name", "req", "  Please Enter Membership_name");
-        $validator->addValidation("dob", "req", "Please Enter Dob");
-        $validator->addValidation("sex", "req", "Please Enter Sex");
-        $validator->addValidation("relation", "req", "Please Enter Relation");
-        $validator->addValidation("national_id", "req", "Please Enter National_Id");
+        $validator->addValidation("dob", "req", " Please Enter Dob");
+        $validator->addValidation("sex", "req", " Please Enter Sex");
+        $validator->addValidation("relation", "req", " Please Enter Relation");
+        $validator->addValidation("national_id", "req", " Please Enter National_Id");
         $validator->addValidation("area", "req", "  Please Enter Area");
         $validator->addValidation("region", "req", "  Please Enter Region");
         $validator->addValidation("location", "req", "  Please Enter Location");
-        $validator->addValidation("selected_provider_code", "req", "Please Enter Selected_provider_code");
+        $validator->addValidation("selected_provider_code", "req", " Please Enter Selected_provider_code");
         $validator->addValidation("chw_code", "req", "  Please Enter Chw_code");
-        $validator->addValidation("transaction_date", "req", "  Please Enter Transaction Date");
-        $validator->addValidation("transaction_no", "req", "  Please Enter Transaction No");
         $validator->addValidation("payment_type", "req", "  Please Select Payment Type");
-        //$validator->addValidation("date_captured", "req", "  Please Enter Date_captured");
-        //$validator->addValidation("card_issued", "req", "  Please Enter Card_issued");
-        //$validator->addValidation("terminated_date", "req", "  Please Enter Terminated_date");
-        $validator->addValidation("payment_type", "req", "  Please Enter Payment_type");
 
         if (!$validator->ValidateForm()) { 
             $error = '';
@@ -200,23 +243,23 @@ class Members extends Helper {
         if ($_FILES['upload_image']['size'] == 0) {
             $upload_image = "";
         } else {
-
-            $upload_image = time() . $_FILES['upload_image']['name'];
-            $upload_tmp = $_FILES["upload_image"]["tmp_name"];
-            $this->createThumbs($path, $pathToThumbs, 100, $upload_image, $upload_tmp);
+        $upload_image = time() . $_FILES['upload_image']['name'];
+        $upload_tmp = $_FILES["upload_image"]["tmp_name"];
+        $this->createThumbs($path, $pathToThumbs, 100, $upload_image, $upload_tmp);
         }
-$mysqlvars = array();
+        
+        $mysqlvars = array();
         $mysqlvars['scheme'] = $this->SanitizeForSQL($formvars['scheme']);
         $mysqlvars['policy_no'] = $this->SanitizeForSQL($formvars['policy_no']);
         $mysqlvars['phone'] = $this->SanitizeForSQL($formvars['phone']);
         $mysqlvars['emergency_phone'] = $this->SanitizeForSQL($formvars['emergency_phone']);
-        $mysqlvars['contract_effective_date'] = $neweffectdate;
+        $mysqlvars['contract_effective_date'] = $this->SanitizeForSQL($formvars['neweffectdate']);
+        $mysqlvars['contract_expiry_date'] = $this->SanitizeForSQL($formvars['contractexpiredate']);
         $mysqlvars['membership_name'] = $this->SanitizeForSQL($formvars['membership_name']);
         $mysqlvars['dob'] = $this->SanitizeForSQL($formvars['dob1']);
         $mysqlvars['sex'] = $this->SanitizeForSQL($formvars['sex']);
         $mysqlvars['relation'] = $this->SanitizeForSQL($formvars['relation']);
         $mysqlvars['national_id'] = $this->SanitizeForSQL($formvars['national_id']);
-        
         $mysqlvars['area'] = $this->SanitizeForSQL($formvars['area']);
         $mysqlvars['region'] = $this->SanitizeForSQL($formvars['region']);
         $mysqlvars['location'] = $this->SanitizeForSQL($formvars['location']);
@@ -224,16 +267,14 @@ $mysqlvars = array();
         $mysqlvars['chw_code'] = $this->SanitizeForSQL($formvars['chw_code']);
         $mysqlvars['date_signed'] = $this->SanitizeForSQL($formvars['date_signed']);
         $mysqlvars['date_captured'] = $this->SanitizeForSQL($formvars['date_captured']);
-        $mysqlvars['card_issued'] = $this->SanitizeForSQL($formvars['card_issued']);
-        $mysqlvars['terminated_date'] = $this->SanitizeForSQL($formvars['terminated_date']);
-        $mysqlvars['contract_effective_date'] = $this->SanitizeForSQL($formvars['neweffectdate']);
-        $mysqlvars['contract_expiry_date'] = $this->SanitizeForSQL($formvars['contractexpiredate']);
-
+        $mysqlvars['card_issued'] = 'N';
+        $mysqlvars['terminated_date'] = '';
         $mysqlvarstra['transaction_date'] = $this->SanitizeForSQL($formvars['transaction_date']);
         $mysqlvarstra['transaction_no'] = $this->SanitizeForSQL($formvars['transaction_no']);
-
         $mysqlvars['payment_type'] = $this->SanitizeForSQL($formvars['payment_type']);
         $mysqlvars['upload_file'] = $this->SanitizeForSQL($upload_image);
+        $mysqlvars['status'] = $this->SanitizeForSQL($formvars['status']);
+        
 
         $payment = 0;
         if ($mysqlvars['payment_type'] == 'Monthly') {
@@ -252,8 +293,6 @@ $mysqlvars = array();
          $msg = 'Insert data of policy no' . "\t" . $mysqlvars['policy_no'] . "\t";
          $this->db->MemberLogData($mysqlvars, $msg);
 
-
-        //exit();
         $insertedId = $this->db->insert_id();
         $membership_prefix = "BP";
         $abc = $formvars['last_rec_num'];
@@ -295,14 +334,12 @@ $mysqlvars = array();
             return false;
         }
         
-        
-
         if (count($_POST['dep_mem_name']) > 0) {
             $i = 0;
             $ch = chr(67);
             $mysqlvarschild = array();
             foreach ($_POST['dep_mem_name'] as $key => $values):
-                //$mysqlvarschild['beneficiary_id'] = $insertid;
+                
                 $mysqlvarschild['membership_name'] = $_POST['dep_mem_name'][$i];
                 $mysqlvarschild['relation'] = $_POST['dep_relation'][$i];
                 $mysqlvarschild['dob'] = $_POST['year'][$i] . "-" . $_POST['month'][$i] . "-" . $_POST['day'][$i];
@@ -310,38 +347,24 @@ $mysqlvars = array();
                 if ($_POST['dep_relation'][$i] == "Spouse") {
                     $ch = "B";
                 }
+                
                 $mysqlvarschild['membership_no'] = strtoupper($membership_prefix . $membership_str . $ch);
                 $mysqlvarschild['scheme'] = $this->SanitizeForSQL($formvars['scheme']);
                 $mysqlvarschild['policy_no'] = $this->SanitizeForSQL($formvars['policy_no']);
-                //$mysqlvarschild['phone'] = $this->SanitizeForSQL($formvars['phone']);
-                //$mysqlvarschild['emergency_phone'] = $this->SanitizeForSQL($formvars['emergency_phone']);
                 $mysqlvarschild['contract_effective_date'] = $mysqlvars['contract_effective_date'];
                 $mysqlvarschild['contract_expiry_date'] = $mysqlvars['contract_expiry_date'];
-
-                //$mysqlvarschild['dob'] = $this->SanitizeForSQL($formvars['dob1']);
                 $mysqlvarschild['sex'] = '';
-                //$mysqlvarschild['national_id'] = "";
-                //$mysqlvarschild['area'] = $this->SanitizeForSQL($formvars['area']);
-                //$mysqlvarschild['region'] = $this->SanitizeForSQL($formvars['region']);
-                //$mysqlvarschild['location'] = $this->SanitizeForSQL($formvars['location']);
-                //$mysqlvarschild['selected_provider_code'] = $this->SanitizeForSQL($formvars['selected_provider_code']);
-                //$mysqlvarschild['chw_code'] = $this->SanitizeForSQL($formvars['chw_code']);
                 $mysqlvarschild['date_signed'] = $mysqlvars['date_signed'];
                 $mysqlvarschild['date_captured'] = $mysqlvars['date_captured'];
-                //$mysqlvarschild['card_issued'] = $this->SanitizeForSQL($formvars['card_issued']);
-                //$mysqlvarschild['terminated_date'] = "";
+                $mysqlvarschild['status'] = $this->SanitizeForSQL($formvars['status']);
                 $this->db->insert('bimapoa_members', $mysqlvarschild);
-                /* if(move_uploaded_file($_FILES['dep_upload_photo'][$i]['name'], $destination)) */
-
+                
                 $path = '../uploads/';
                 $pathToThumbs = '../uploads/thumbs/';
                 $dep_image_name = time() . $_FILES['dep_image']['name'][$i];
 
                 $dep_image_name_tmp = $_FILES["dep_image"]["tmp_name"][$i];
                 $this->createThumbs($path, $pathToThumbs, 100, $dep_image_name, $dep_image_name_tmp);
-
-
-
 
                 move_uploaded_file($_FILES["dep_image"]["tmp_name"][$i], $path . $dep_image_name);
                 $deparray = array();
@@ -368,7 +391,6 @@ $mysqlvars = array();
         if (!$this->ValidateMemberUpdation()) {
             return false;
         }
-
 
         $this->CollectMemberDataUpdation($formvars);
 
@@ -414,26 +436,12 @@ $mysqlvars = array();
     }
 
     function ValidateMemberUpdation() {
-        //This is a hidden input field. Humans won't fill this field.
+        
         if (!empty($_POST[$this->GetSpamTrapInputName()])) {
-            //The proper error is not given intentionally
             $this->HandleError("Automated submission prevention: case 2 failed");
             return false;
         }
         $validator = new FormValidator();
-        //$validator->addValidation("policy_no", "req", "  Please Enter policy_no");
-        //	$validator->addValidation("phone", "req", "  Enter Contract_effective_date");
-        //	$validator->addValidation("emergency_phone", "req", "  Enter Contract_effective_date");
-        //	$validator->addValidation("membership_name", "req", "  Please Enter Membership_name");
-        //	$validator->addValidation("dob", "req", "Please Enter Dob");
-        //$validator->addValidation("sex", "req", "Please Enter Sex");
-        //	$validator->addValidation("relation", "req", "Please Enter Relation");
-        //	$validator->addValidation("area", "req", "  Please Enter Area");
-        //	$validator->addValidation("region", "req", "  Please Enter Region");
-        //	$validator->addValidation("location", "req", "  Please Enter Location");
-        //	$validator->addValidation("selected_provider_code", "req", "Please Enter Selected_provider_code");
-        //	$validator->addValidation("chw_code", "req", "  Please Enter Chw_code");
-        //	$validator->addValidation("payment_type", "req", "  Please Enter Payment_type");
         if (!$validator->ValidateForm()) {
             $error = '';
             $error_hash = $validator->GetErrors();
@@ -512,9 +520,8 @@ $mysqlvars = array();
                 $this->HandleDBError("Error inserting data to the table\nquery:$insert_query");
                 return false;
             }
-            
-           
         }
+        
         $mysqlvars = array();
         $mysqlvars['policy_no'] = $this->SanitizeForSQL($formvars['policy_no']);
         $mysqlvars['national_id'] = $this->SanitizeForSQL($formvars['national_id']);
@@ -531,22 +538,17 @@ $mysqlvars = array();
         $mysqlvars['selected_provider_code'] = $this->SanitizeForSQL($formvars['selected_provider_code']);
         $mysqlvars['chw_code'] = $this->SanitizeForSQL($formvars['chw_code']);
         $mysqlvars['date_signed'] = $this->SanitizeForSQL($formvars['date_signed']);
-        //$mysqlvars['date_captured'] = $this->SanitizeForSQL($formvars['date_captured']);
-        //$mysqlvars['card_issued'] = $this->SanitizeForSQL($formvars['card_issued']);
         $mysqlvars['upload_file'] = $this->SanitizeForSQL($img_name);
         $mysqlvars['terminated_date'] = "";
         $mysqlvars['payment_type'] = $this->SanitizeForSQL($formvars['payment_type']);
-
 
         if (!$this->db->update("bimapoa_members", $mysqlvars, "member_id = '" . $formvars['member_id'] . "'")) {
             $this->HandleDBError("Error Updating data to the table\nquery:$insert_query");
             return false;
         }
         
-            $msg = 'Update data of policy no' . "\t" . $mysqlvars['policy_no'] . "\t";
-            $this->db->MemberLogData($mysqlvars, $msg);
-
-
+        $msg = 'Update data of policy no' . "\t" . $mysqlvars['policy_no'] . "\t";
+        $this->db->MemberLogData($mysqlvars, $msg);
 
         if (count($_POST['dep_mem_name']) > 0) {
             $i = 0;
@@ -622,6 +624,7 @@ $mysqlvars = array();
                     $tmp_img = imagecreatetruecolor($new_width, $new_height);
                     imagecopyresized($tmp_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
                     imagejpeg($tmp_img, "{$pathToThumbs}{$filename}");
+                    
                 } else if (strtolower($info['extension']) == 'png') {
                     
                     $img = imagecreatefrompng("{$pathToImages}{$filename}");
@@ -632,6 +635,7 @@ $mysqlvars = array();
                     $tmp_img = imagecreatetruecolor($new_width, $new_height);
                     imagecopyresized($tmp_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
                     imagepng($tmp_img, "{$pathToThumbs}{$filename}");
+                    
                 } else if (strtolower($info['extension']) == 'gif') {
                     
                     $img = imagecreatefromgif("{$pathToImages}{$filename}");

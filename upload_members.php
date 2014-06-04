@@ -1,5 +1,4 @@
 <?php
-
 ob_start();
 include_once './common_include_out.php';
 $providerobj = new Providers();

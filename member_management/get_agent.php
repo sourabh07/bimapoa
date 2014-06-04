@@ -1,5 +1,5 @@
 <?php
-@mysql_connect('ambush2006.db.11283971.hostedresource.com', 'ambush2006', 'Velociter@1985') or die("Unable to connect to MySql Server");
+@mysql_connect('localhost', 'root', '') or die("Unable to connect to MySql Server");
 @mysql_select_db('ambush2006') or die("Unable to select database");
 $agent_code = $_POST['agent_code'];
 

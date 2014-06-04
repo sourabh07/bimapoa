@@ -6,6 +6,11 @@ $national_id = $_POST['national_id'];
 $selectPolicy = "Select * from bimapoa_members where national_id ='".$national_id."'";
 $resultPolicy=mysql_query($selectPolicy) or die(mysql_error());
 
+if($national_id != '')
+{
+$selectPolicy = "Select * from bimapoa_members where national_id ='".$national_id."'";
+$resultPolicy=mysql_query($selectPolicy) or die(mysql_error());
+
 
 if (mysql_num_rows($resultPolicy) != 0)
 {
@@ -14,5 +19,10 @@ if (mysql_num_rows($resultPolicy) != 0)
 else
 {
 	echo $result = "success";
+}
+}
+else
+{
+    echo $result = "success";
 }
 //return $result;

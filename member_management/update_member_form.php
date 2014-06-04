@@ -409,7 +409,7 @@ include '../include/top_navigation_in.php';
 								</div>
 								<?php
 								//echo "select * from bimapoa_members where policy_no='".$row['policy_no']."' and relation<>'SELF'";
-								$depquery = mysql_query("select * from bimapoa_members where policy_no='".$row['policy_no']."' and relation<>'SELF'");
+								$depquery = mysql_query("select * from bimapoa_members where policy_no='".$row['policy_no']."' and relation<>'SELF' and status='Y'");
 								while($fetchresultdep = mysql_fetch_array($depquery)){
 									?>
 								<div class="control-group">
